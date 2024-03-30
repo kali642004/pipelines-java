@@ -1,22 +1,57 @@
-# Maven
-# Build your Java project and run tests with Apache Maven.
-# Add steps that analyze code, save build artifacts, deploy, and more:
-# https://docs.microsoft.com/azure/devops/pipelines/languages/java
-
 trigger:
-- main
+  branches:
+    include:
+      - main
+      - develop
+  paths:
+    exclude:
+      - README.md  # Example: Exclude specific files from triggering the pipeline
 
 pool:
-  vmImage: ubuntu-latest
+  vmImage: 'ubuntu-latest'
 
 steps:
-- task: Maven@3
-  inputs:
-    mavenPomFile: 'pom.xml'
-    mavenOptions: '-Xmx3072m'
-    javaHomeOption: 'JDKVersion'
-    jdkVersionOption: '1.8'
-    jdkArchitectureOption: 'x64'
-    publishJUnitResults: true
-    testResultsFiles: '**/surefire-reports/TEST-*.xml'
-    goals: 'package'
+- script: echo 'Your pipeline is now running.'
+  displayName: 'Run a script'
+
+# Add more steps as needed for your build, test, and deployment process
+# Example:
+# - task: Maven@3
+#   inputs:
+#     mavenPomFile: 'pom.xml'
+#     goals: 'package'
+
+# - task: PublishTestResults@2
+#   inputs:
+#     testResultsFiles: '**/TEST-*.xml'
+#     searchFolder: '$(System.DefaultWorkingDirectory)'
+
+# - task: ArchiveFiles@2
+#   inputs:
+#     rootFolderOrFile: '$(System.DefaultWorkingDirectory)'
+#     includeRootFolder: false
+#     archiveType: 'zip'
+#     archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip'
+#     replaceExistingArchive: true
+
+# - task: PublishBuildArtifacts@1
+#   inputs:
+#     pathtoPublish: '$(Build.ArtifactStagingDirectory)'
+#     artifactName: 'drop'
+
+# Example deployment job (uncomment and customize as needed)
+# - stage: deploy
+#   displayName: 'Deploy to Azure App Service'
+#   jobs:
+#   - deployment: Deploy
+#     environment: 'production'
+#     strategy:
+#       runOnce:
+#         deploy:
+#           steps:
+#           - task: AzureWebApp@1
+#             inputs:
+#               azureSubscription: 'Your Azure service connection'
+#               appName: 'Your Azure App Service name'
+#               package: '$(Pipeline.Workspace)/drop/$(Build.BuildId).zip'
+#               # Additional parameters as needed
